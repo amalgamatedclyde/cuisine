@@ -60,8 +60,9 @@ colnames(ingredient.weight.matrix) <- unique.ingredients
 #for(num in 1:length(cuisine.counts)){ingredient.weight.matrix[num,] <- (sapply(unique.ingredients, function(x)                            sum(cuisine.counts[[num]]==x))) * idf}
 
 for(num in 1:length(cuisine.counts)){ingredient.weight.matrix[num,] <- sapply(unique.ingredients, function(x)                            sum(cuisine.counts[[num]]==x))
-  apply(ingredient.weight.matrix, 1, function(x) x/max(x)*idf)
   }
+apply(ingredient.weight.matrix, 1, function(x) x/max(x)*idf)
+ingredient.weight.matrix <- t(ingredient.weight.matrix)
 
 ```
 #test
@@ -87,8 +88,15 @@ is.ingredient.in.recipe <- function(num){
   true <- c()
   for(ingredient in unique.ingredients){
   true <- c(true, ingredient %in% unlist(test.df[num,]$ingredients))}
-  row <- true * idf
-  row
+  test.weight.matrix[num,] <- true
   }
 
-for(num in 1:nrow(test.df)){test.weight.matrix[num,] <- is.ingredient.in.recipe(num)}
+for(num in 5000:5001){test.weight.matrix[num,] <- is.ingredient.in.recipe(num)}#takes_forever
+
+sapply(1:nrow(test.df), is.ingredient.in.recipe)
+#sapply(unique.ingredients, function(x, num) ingredient %in% unlist(test.df[num,]$ingredients)) #working on thistes 
+cookbook.df$cuisine <- as.character(cookbook.df$cuisine)
+cookbook.df$cuisine <- as.factor(cookbook.df$cuisine)
+cl <- cookbook.df$cuisine
+
+find.match <- function(row){apply(ingredient.weight.matrix, 1, function(x) sum(x*row))}
