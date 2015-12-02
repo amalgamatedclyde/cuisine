@@ -59,7 +59,7 @@ rownames(ingredient.weight.matrix) <- unique.cuisines
 colnames(ingredient.weight.matrix) <- unique.ingredients
 #for(num in 1:length(cuisine.counts)){ingredient.weight.matrix[num,] <- (sapply(unique.ingredients, function(x)                            sum(cuisine.counts[[num]]==x))) * idf}
 
-for(num in 1:length(cuisine.counts)){ingredient.weight.matrix[num,] <- sapply(unique.ingredients, function(x)                            sum(cuisine.counts[[num]]==x))
+for(num in 1:length(cuisine.counts)){ingredient.weight.matrix[num,] <- sapply(unique.ingredients, function(x) sum(cuisine.counts[[num]]==x))
   }
 apply(ingredient.weight.matrix, 1, function(x) x/max(x)*idf)
 ingredient.weight.matrix <- t(ingredient.weight.matrix)
