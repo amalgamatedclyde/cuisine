@@ -48,7 +48,7 @@ for(ingredient in unique.ingredients){
   cuisines.with.ingredient <- c(cuisines.with.ingredient, sum(doc.freq))
   }
 names(cuisines.with.ingredient) <- unique.ingredients
-idf <- log(20/(cuisines.with.ingredient))
+idf <- log(21/(cuisines.with.ingredient))
 
 #create matrix of all ingredients weigth by cuisine type
 # cuisine.counts <- list(list())
@@ -121,3 +121,5 @@ rownames(w) <- test.df$cuisine
 result <- apply(v, 1, function(row) t(apply(ingredient.weight.matrix, 1, function(row2) sum(row*row2))))
 result <- t(result)
 colnames(result) <- rownames(ingredient.weight.matrix)
+
+by.chance <- sudo apt-get install google-chrome
