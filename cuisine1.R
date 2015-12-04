@@ -5,7 +5,7 @@ date: "November 24, 2015"
 output: html_document
 ---
 
-```{r create_matrix, echo=TRUE}
+
 #create train/test set
 setwd("~/cuisine")
   require("rjson")
@@ -26,7 +26,7 @@ setwd("~/cuisine")
   cookbook.df <- cbind(id, cuisine, ingredients)
   cookbook.df <- as.data.frame(cookbook.df)
   rownames(cookbook.df) <- NULL
-  saveRDS(cookbook.df, "cookbook.RDS")
+  saveRDS(cookbook.df, "full_cookbook.RDS")
 
 #tf,idf
 all.ingredients <- unlist(cookbook.df$ingredients) #all ingredients in all recipes. this is the corpus
@@ -74,11 +74,11 @@ is.ingredient.in.cuisine <- function(num){
   true}
 
 l <- sapply(1:nrow(cookbook.df), is.ingredient.in.cuisine)
-interested in the subjectl <- t(l)
+
 #both of the operations below multiply matrix v by vectore idf row-wise
 m <- t(t(l) * idf)
-```
- #test data
+ 
+#test data
 
 
   first.row <- test[[1]]
@@ -93,9 +93,9 @@ m <- t(t(l) * idf)
   rownames(test.df) <- NULL
 
 #create ingredient for each recipe in test case
-test.weight.matrix <- matrix(, nrow = 7914, ncol = 6350, byrow=T)
-rownames(test.weight.matrix) <- test.df$cuisine
-colnames(test.weight.matrix) <- unique.ingredients
+# test.weight.matrix <- matrix(, nrow = 7914, ncol = 6350, byrow=T)
+# rownames(test.weight.matrix) <- test.df$cuisine
+# colnames(test.weight.matrix) <- unique.ingredients
 test.ingredients <- list(list())
 is.ingredient.in.recipe <- function(num){
   true <- c()
@@ -122,4 +122,43 @@ result <- apply(v, 1, function(row) t(apply(ingredient.weight.matrix, 1, functio
 result <- t(result)
 colnames(result) <- rownames(ingredient.weight.matrix)
 
-by.chance <- sudo apt-get install google-chrome
+###real test data
+
+
+
+first.row <- test[[1]]
+id <- first.row[[1]]
+ingredients <- first.row[2]
+
+for(i in 2:length(test)){id <- c(id, test[[i]][1])}
+for(i in 2:length(test)){ingredients <- c(ingredients, test[[i]][2])}
+test.df <- cbind(id, ingredients)
+test.df <- as.data.frame(test.df)
+rownames(test.df) <- NULL
+
+#create ingredient for each recipe in test case
+# test.weight.matrix <- matrix(, nrow = 7914, ncol = 6350, byrow=T)
+# rownames(test.weight.matrix) <- test.df$cuisine
+# colnames(test.weight.matrix) <- unique.ingredients
+test.ingredients <- list(list())
+is.ingredient.in.recipe <- function(num){
+  true <- c()
+  for(ingredient in unique.ingredients){
+    true <- c(true, ingredient %in% unlist(test.df[num,]$ingredients))}
+  true
+  # test.weight.matrix[num,] <- true
+  #  sapply(unique.ingredients, function(x, num) ingredient %in% unlist(test.df[num,]$ingredients)) #does not speed up creation of test.weight.matrix
+}
+
+# for(num in 1:7914){test.weight.matrix[num,] <- is.ingredient.in.recipe(num)}#takes_forever
+
+v <- sapply(1:9944, is.ingredient.in.recipe)
+v <- t(v)
+#both of the operations below multiply matrix v by vectore idf row-wise
+w <- t(t(v) * idf)
+#w2 <- sweep(v ,MARGIN=2,idf,`*`) the firon is faster
+cookbook.df$cuisine <- as.character(cookbook.df$cuisine)
+cookbook.df$cuisine <- as.factor(cookbook.df$cuisine)
+cl <- cookbook.df$cuisine
+
+
